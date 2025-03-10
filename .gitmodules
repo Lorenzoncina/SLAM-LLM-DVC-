@@ -1,0 +1,3 @@
+[submodule "SLAM-LLM"]
+	path = SLAM-LLM
+	url = https://github.com/Lorenzoncina/SLAM-LLM.git
