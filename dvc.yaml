@@ -1,0 +1,29 @@
+stages:
+  data_prep:
+    cmd:  python src/utils/prepare_slamllm_data.py --config params.yaml
+    deps:
+    - src/utils/prepare_slamllm_data.py
+    - data/speech_massive_data/hf_parquet_data
+    params:
+    - prepare
+    outs:
+    - data/speech_massive_data/slamllm_json_data
+  finetune:
+    cmd: bash SLAM-LLM/examples/asr_librispeech/scripts/finetune.sh ${train.speech_encoder_path} ${train.llm_path} ${train.train_data_path} ${train.val_data_path} ${train.learn_rate} ${train.llm_name} ${train.llm_dim} ${train.encoder_name} ${train.encoder_projector_ds_rate} ${train.encoder_dim} ${train.encoder_projector} ${train.num_epochs} ${train.warmup_steps} ${train.total_steps} ${train.batch_size_training} ${train.val_batch_size} /stek/lconcina/SLAM-LLM-DVC-/train_output/${train.llm_name}-speechMassive-${train.encoder_projector}-steplrwarmupkeep${train.learn_rate}-${train.encoder_name}
+    deps:
+    - SLAM-LLM/examples/asr_librispeech/scripts/finetune.sh
+    - data/speech_massive_data/slamllm_json_data
+    params:
+    - train
+    outs:
+    - /stek/lconcina/SLAM-LLM-DVC-/train_output/${train.llm_name}-speechMassive-${train.encoder_projector}-steplrwarmupkeep${train.learn_rate}-${train.encoder_name}
+  decode:
+    cmd: bash SLAM-LLM/examples/asr_librispeech/scripts/decode.sh ${decode.speech_encoder_path} ${decode.llm_path} /stek/lconcina/SLAM-LLM-DVC-/train_output/${train.llm_name}-speechMassive-${train.encoder_projector}-steplrwarmupkeep${train.learn_rate}-${train.encoder_name} ${decode.split} ${decode.test_data_path} ${train.llm_name} ${train.llm_dim} ${train.encoder_name} ${train.encoder_dim} ${train.encoder_projector} ${train.num_epochs} ${decode.val_batch_size}
+    deps:
+    - SLAM-LLM/examples/asr_librispeech/scripts/decode.sh 
+    - /stek/lconcina/SLAM-LLM-DVC-/train_output/${train.llm_name}-speechMassive-${train.encoder_projector}-steplrwarmupkeep${train.learn_rate}-${train.encoder_name}
+    params:
+    - decode
+    - train
+    #outs:
+  #TODO: add evaluation script

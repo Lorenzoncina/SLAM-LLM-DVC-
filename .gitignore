@@ -1,1 +1,14 @@
-/data
+# Ignore data and models (tracked by DVC)
+data/
+models/
+
+# Ignore DVC cache
+.dvc/cache/
+.dvc/tmp/
+
+# Ignore IDE and Python temp files
+.vscode/
+
+# Ignore temporary training output
+train_output/
+

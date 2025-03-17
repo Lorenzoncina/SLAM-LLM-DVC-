@@ -1,0 +1,31 @@
+prepare:
+  base_dir: /stek/corpora/Speech-MASSIVE/
+  json_slam_files: data/speech_massive_data/slamllm_json_data
+  lang: fr-FR
+  train_split: train #or train-115
+
+train:
+  speech_encoder_path: /stek/lconcina/SLAM-LLM-DVC-/models/WavLM-Large.pt
+  llm_path: /stek/lconcina/SLAM-LLM-DVC-/models/vicuna-7b-v1.5
+  train_data_path: /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_fr-FR_train.jsonl
+  val_data_path: /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_fr-FR_dev.jsonl
+  learn_rate: 1e-4
+  #output_dir: /stek/lconcina/SLAM-LLM-DVC-/train_output/
+  llm_name: vicuna-7b-v1.5
+  llm_dim: 4096
+  encoder_name: wavlm
+  encoder_projector_ds_rate: 5
+  encoder_dim: 1024
+  encoder_projector: linear
+  num_epochs: 3
+  warmup_steps: 1000
+  total_steps: 100000
+  batch_size_training: 2
+  val_batch_size: 2
+
+decode:
+  speech_encoder_path: /stek/lconcina/SLAM-LLM-DVC-/models/WavLM-Large.pt
+  llm_path: /stek/lconcina/SLAM-LLM-DVC-/models/vicuna-7b-v1.5
+  split: speech_massive_fr-FR_test
+  test_data_path: /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data
+  val_batch_size: 2

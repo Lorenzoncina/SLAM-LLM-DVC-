@@ -1,0 +1,4 @@
+[core]
+    remote = myremote
+['remote "myremote"']
+    url = /stek/lconcina/dvc_store_remote_slam_llm_dvc_repo/
