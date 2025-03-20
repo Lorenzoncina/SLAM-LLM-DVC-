@@ -18,7 +18,7 @@ stages:
     outs:
     - /stek/lconcina/SLAM-LLM-DVC-/train_output/${train.llm_name}-speechMassive-${train.encoder_projector}-steplrwarmupkeep${train.learn_rate}-${train.encoder_name}
   decode:
-    cmd: bash SLAM-LLM/examples/asr_librispeech/scripts/decode.sh ${decode.speech_encoder_path} ${decode.llm_path} /stek/lconcina/SLAM-LLM-DVC-/train_output/${train.llm_name}-speechMassive-${train.encoder_projector}-steplrwarmupkeep${train.learn_rate}-${train.encoder_name} ${decode.split} ${decode.test_data_path} ${train.llm_name} ${train.llm_dim} ${train.encoder_name} ${train.encoder_dim} ${train.encoder_projector} ${train.num_epochs} ${decode.val_batch_size}
+    cmd: bash SLAM-LLM/examples/asr_librispeech/scripts/decode.sh ${decode.speech_encoder_path} ${decode.llm_path} /stek/lconcina/SLAM-LLM-DVC-/train_output/${train.llm_name}-speechMassive-${train.encoder_projector}-steplrwarmupkeep${train.learn_rate}-${train.encoder_name} ${decode.split} ${decode.test_data_path} ${train.llm_name} ${train.llm_dim} ${train.encoder_name} ${train.encoder_dim} ${train.encoder_projector} ${train.num_epochs} ${decode.val_batch_size} ${decode.ckpt_path}
     deps:
     - SLAM-LLM/examples/asr_librispeech/scripts/decode.sh 
     - /stek/lconcina/SLAM-LLM-DVC-/train_output/${train.llm_name}-speechMassive-${train.encoder_projector}-steplrwarmupkeep${train.learn_rate}-${train.encoder_name}
@@ -27,3 +27,8 @@ stages:
     - train
     #outs:
   #TODO: add evaluation script
+  evaluate:
+    cmd:  python src/utils/evaluate_exp.py --config params.yaml
+    params:
+    - evaluate
+    #outs:

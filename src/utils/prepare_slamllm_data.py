@@ -26,6 +26,7 @@ def convert_parquet_to_jsonl(params):
     base_dir = params.prepare.base_dir
     train_split = params.prepare.train_split   
     json_slam_files = params.prepare.json_slam_files
+    task = params.prepare.task
 
     processed_data_dir = Path(json_slam_files)
     processed_data_dir.mkdir(exist_ok=True)
@@ -45,7 +46,7 @@ def convert_parquet_to_jsonl(params):
         parquet_file = f"data/speech_massive_data/hf_parquet_data/speech_massive_{lang}_{split}.parquet"
 
         #output file
-        output_jsonl = f"data/speech_massive_data/slamllm_json_data/speech_massive_{lang}_{split}.jsonl"
+        output_jsonl = f"data/speech_massive_data/slamllm_json_data/speech_massive_{lang}_{split}_{task}.jsonl"
 
         # Ensure file exists
         if not os.path.exists(parquet_file):
@@ -73,8 +74,9 @@ def convert_parquet_to_jsonl(params):
                 entry = {
                     "key": row["id"],
                     "source": row["absolute_path"],  # Keeping the original path as is
-                    "target": f"Transcript: {row['utt']}. Intent class: {row['scenario_str']}"
-                    #"target": f"{row['utt']}"  For normal SLAM ASR recipe
+                    "target": f"Transcript: {row['utt']}. Intent class: {row['scenario_str']}. Annotated utterance: {row['annot_utt']}"  #ASR + Intent Classification + Slot Filling Tasks
+                    #"target": f"Transcript: {row['utt']}. Intent class: {row['scenario_str']}" #ASR + Intent Classification tasks
+                    #"target": f"{row['utt']}" # ASR task only
                 }
                 f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 

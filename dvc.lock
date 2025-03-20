@@ -10,8 +10,8 @@ stages:
       nfiles: 3
     - path: src/utils/prepare_slamllm_data.py
       hash: md5
-      md5: cb2331c3ecdb2413f8d870ca72302c1c
-      size: 3234
+      md5: 3825bf036fc9cdc2e4171253cff410a6
+      size: 3558
     params:
       params.yaml:
         prepare:
@@ -19,17 +19,18 @@ stages:
           json_slam_files: data/speech_massive_data/slamllm_json_data
           lang: fr-FR
           train_split: train
+          task: asr_ic_sf
     outs:
     - path: data/speech_massive_data/slamllm_json_data
       hash: md5
-      md5: e19d5c66c182f3fc66f988eb1dc0fe62.dir
-      size: 3527523
+      md5: 0f0e8006c36991378acd7e04b17a1896.dir
+      size: 4853460
       nfiles: 3
   finetune:
     cmd: bash SLAM-LLM/examples/asr_librispeech/scripts/finetune.sh /stek/lconcina/SLAM-LLM-DVC-/models/WavLM-Large.pt
       /stek/lconcina/SLAM-LLM-DVC-/models/vicuna-7b-v1.5 
-      /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_fr-FR_train.jsonl
-      /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_fr-FR_dev.jsonl
+      /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_fr-FR_train_asr_ic_sf.jsonl
+      /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_fr-FR_dev_asr_ic_sf.jsonl
       0.0001 vicuna-7b-v1.5 4096 wavlm 5 1024 linear 3 1000 100000 2 2 
       /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep0.0001-wavlm
     deps:
@@ -39,8 +40,8 @@ stages:
       size: 3128
     - path: data/speech_massive_data/slamllm_json_data
       hash: md5
-      md5: e19d5c66c182f3fc66f988eb1dc0fe62.dir
-      size: 3527523
+      md5: 0f0e8006c36991378acd7e04b17a1896.dir
+      size: 4853460
       nfiles: 3
     params:
       params.yaml:
@@ -48,9 +49,9 @@ stages:
           speech_encoder_path: /stek/lconcina/SLAM-LLM-DVC-/models/WavLM-Large.pt
           llm_path: /stek/lconcina/SLAM-LLM-DVC-/models/vicuna-7b-v1.5
           train_data_path: 
-            /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_fr-FR_train.jsonl
+            /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_fr-FR_train_asr_ic_sf.jsonl
           val_data_path: 
-            /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_fr-FR_dev.jsonl
+            /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_fr-FR_dev_asr_ic_sf.jsonl
           learn_rate: 0.0001
           llm_name: vicuna-7b-v1.5
           llm_dim: 4096
@@ -66,40 +67,40 @@ stages:
     outs:
     - path: train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep0.0001-wavlm
       hash: md5
-      md5: 28ec8f3f330e8197f2544d559e7dcd59.dir
-      size: 1587372394
+      md5: a3c5af1b55d6632bcb97dc6c84c460a9.dir
+      size: 1587374834
       nfiles: 26
   decode:
     cmd: bash SLAM-LLM/examples/asr_librispeech/scripts/decode.sh /stek/lconcina/SLAM-LLM-DVC-/models/WavLM-Large.pt
       /stek/lconcina/SLAM-LLM-DVC-/models/vicuna-7b-v1.5 
       /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep0.0001-wavlm
-      speech_massive_fr-FR_test /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data
+      speech_massive_fr-FR_test_asr_ic_sf /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data
       vicuna-7b-v1.5 4096 wavlm 1024 linear 3 2
     deps:
     - path: SLAM-LLM/examples/asr_librispeech/scripts/decode.sh
       hash: md5
-      md5: 037d7f7fa2d26ba6587a1dd6906159aa
+      md5: 9c84b9bb0ece0059479744778ad2a941
       size: 2549
     - path: train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep0.0001-wavlm
       hash: md5
-      md5: 7e5971ccb578883347f26b059c0b4292.dir
-      size: 1587911117
+      md5: 7a6e20941efb7fd1ba47f5ad801080b4.dir
+      size: 1588367852
       nfiles: 33
     params:
       params.yaml:
         decode:
           speech_encoder_path: /stek/lconcina/SLAM-LLM-DVC-/models/WavLM-Large.pt
           llm_path: /stek/lconcina/SLAM-LLM-DVC-/models/vicuna-7b-v1.5
-          split: speech_massive_fr-FR_test
+          split: speech_massive_fr-FR_test_asr_ic_sf
           test_data_path: /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data
           val_batch_size: 2
         train:
           speech_encoder_path: /stek/lconcina/SLAM-LLM-DVC-/models/WavLM-Large.pt
           llm_path: /stek/lconcina/SLAM-LLM-DVC-/models/vicuna-7b-v1.5
           train_data_path: 
-            /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_fr-FR_train.jsonl
+            /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_fr-FR_train_asr_ic_sf.jsonl
           val_data_path: 
-            /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_fr-FR_dev.jsonl
+            /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_fr-FR_dev_asr_ic_sf.jsonl
           learn_rate: 0.0001
           llm_name: vicuna-7b-v1.5
           llm_dim: 4096
@@ -112,3 +113,14 @@ stages:
           total_steps: 100000
           batch_size_training: 2
           val_batch_size: 2
+  evaluate:
+    cmd: python src/utils/evaluate_exp.py --config params.yaml
+    params:
+      params.yaml:
+        evaluate:
+          ground_truth_file: 
+            /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep0.0001-wavlm/asr_epoch_4_step_3729/decode_speech_massive_fr-FR_test_asr_ic_sf_beam4_gt
+          prediction_file: 
+            /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep0.0001-wavlm/asr_epoch_4_step_3729/decode_speech_massive_fr-FR_test_asr_ic_sf_beam4_pred
+          evaluate_log: 
+            /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep0.0001-wavlm/asr_epoch_4_step_3729/evaluate.log
