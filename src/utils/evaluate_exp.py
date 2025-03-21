@@ -8,6 +8,7 @@ For Intent Classification: Accuracy
 For Slot Filling: TODO
 
 """
+import os
 import re
 import argparse
 from load_params import load_params
@@ -17,12 +18,12 @@ from whisper_normalizer.basic import BasicTextNormalizer
 # from whisper_normalizer.english import EnglishTextNormalizer
 
 
-def parse_file(params):
+def parse_file(params, output_dir):
 
     ckpt_path = params.decode.ckpt_path
     
-    ground_truth_file = params.evaluate.ground_truth_file
-    prediction_file = params.evaluate.prediction_file
+    ground_truth_file = os.path.join(output_dir, ckpt_path, params.evaluate.ground_truth_file)
+    prediction_file = os.path.join(output_dir, ckpt_path, params.evaluate.prediction_file)
 
     with open(ground_truth_file, 'r') as gt, open(prediction_file, 'r') as pred:
         gt_lines = gt.readlines()
@@ -80,6 +81,7 @@ if __name__ == "__main__":
 
     args_parser = argparse.ArgumentParser()
     args_parser.add_argument('--config', dest='config', required=True)
+    args_parser.add_argument('--output_dir', required=True)
     args = args_parser.parse_args()
 
     #load parameters from params.yaml file
@@ -89,7 +91,7 @@ if __name__ == "__main__":
     normalizer = BasicTextNormalizer()
 
     # parse files
-    _, ground_truth_texts, ground_truth_intents, _, prediction_texts, prediction_intents= parse_file(params)
+    _, ground_truth_texts, ground_truth_intents, _, prediction_texts, prediction_intents= parse_file(params, args.output_dir)
 
     """
     WER for ASR computations
@@ -107,14 +109,23 @@ if __name__ == "__main__":
     """
     Accuracy for Intent Classification computation
     """
-    #TODO implement 
+    # normalize intents
+    ground_truth_intents = [normalizer(text) for text in ground_truth_intents]
+    prediction_intents = [normalizer(text) for text in prediction_intents]
+
+    correct_intents = sum(1 for gt, pred in zip(ground_truth_intents, prediction_intents) if gt == pred)
+    intent_accuracy = 100 * (correct_intents / len(ground_truth_intents))
+    print("Computed Intent Classification Accuracy:", intent_accuracy)
 
 
     """
     Open and write output log file
     """
     output_file = params.evaluate.evaluate_log
-    with open(output_file, "w") as file:
-        wer_line = "WER: "+ str(wer)
+    output_file_path = os.path.join(args.output_dir, params.decode.ckpt_path, output_file)
+    with open(output_file_path, "w") as file:
+        wer_line = "WER: "+ str(wer) + "\n"
+        ic_line = "Intent Classification Accuracy: " + str(intent_accuracy) + "\n"
         file.write(wer_line)
+        file.write(ic_line)
         

@@ -9,12 +9,14 @@ prepare:
   task: asr_ic_sf #specify here for which task the pipeline is finetuned. asr, ic: intent classification, sf: slot filling
 
 train:
+  experiment_date: "20240320"
   speech_encoder_path: /stek/lconcina/SLAM-LLM-DVC-/models/WavLM-Large.pt
   llm_path: /stek/lconcina/SLAM-LLM-DVC-/models/vicuna-7b-v1.5
   train_data_path: /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_fr-FR_train_asr_ic_sf.jsonl
   val_data_path: /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_fr-FR_dev_asr_ic_sf.jsonl
+  #manually define the output folder with this format output_dir: /stek/lconcina/SLAM-LLM-DVC-/train_output/${train.llm_name}-speechMassive-${train.encoder_projector}-steplrwarmupkeep${train.learn_rate}-${train.encoder_name}-${train.experiment_date}
+  output_dir:  /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250320
   learn_rate: 1e-4
-  #output_dir: /stek/lconcina/SLAM-LLM-DVC-/train_output/
   llm_name: vicuna-7b-v1.5
   llm_dim: 4096
   encoder_name: wavlm
@@ -36,6 +38,6 @@ decode:
   ckpt_path: asr_epoch_3_step_5486/ #indicate here which checkpoint must be decoded by the decode script. this will be the same evaluated at the next stage
 
 evaluate:
-  ground_truth_file: /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep0.0001-wavlm/asr_epoch_4_step_3729/decode_speech_massive_fr-FR_test_asr_ic_sf_beam4_gt  # ground throuth file
-  prediction_file :  /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep0.0001-wavlm/asr_epoch_4_step_3729/decode_speech_massive_fr-FR_test_asr_ic_sf_beam4_pred # Prediction file
-  evaluate_log:  /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep0.0001-wavlm/asr_epoch_4_step_3729/evaluate.log #file where all the evaluations are saved. This is the same folder of the checkpoint
+  ground_truth_file: decode_speech_massive_fr-FR_test_asr_ic_sf_beam4_gt
+  prediction_file: decode_speech_massive_fr-FR_test_asr_ic_sf_beam4_pred
+  evaluate_log: evaluate_2.log
