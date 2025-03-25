@@ -74,7 +74,8 @@ def convert_parquet_to_jsonl(params):
                 entry = {
                     "key": row["id"],
                     "source": row["absolute_path"],  # Keeping the original path as is
-                    "target": f"Transcript: {row['utt']}. Intent class: {row['scenario_str']}. Annotated utterance: {row['annot_utt']}"  #ASR + Intent Classification + Slot Filling Tasks
+                    "target": f"Intent class: {row['scenario_str']}" #IC only
+                    #"target": f"Transcript: {row['utt']}. Intent class: {row['scenario_str']}. Annotated utterance: {row['annot_utt']}"  #ASR + Intent Classification + Slot Filling Tasks
                     #"target": f"Transcript: {row['utt']}. Intent class: {row['scenario_str']}" #ASR + Intent Classification tasks
                     #"target": f"{row['utt']}" # ASR task only
                 }

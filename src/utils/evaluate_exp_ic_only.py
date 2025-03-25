@@ -29,8 +29,8 @@ def parse_file(params, output_dir):
         gt_lines = gt.readlines()
         pred_lines = pred.readlines()
     
-    gt_keys, gt_transcripts, gt_intents = [], [], []
-    pred_keys, pred_transcripts, pred_intents = [], [], []
+    gt_keys, gt_intents = [], []
+    pred_keys, pred_intents = [], []
 
     for gt_line, pred_line in zip(gt_lines, pred_lines):
         gt_parts = gt_line.strip().split("\t", 1)
@@ -49,21 +49,17 @@ def parse_file(params, output_dir):
                 """
 
                 #extract transcription, intent and others...
-                gt_match = re.match(r'Transcript: (.*?)\.?\s+Intent class: (.*)', gt_parts[1].strip())
-                pred_match = re.match(r'Transcript: (.*?)\.?\s+Intent class: (.*)', pred_parts[1].strip())
+                gt_match = re.match(r'.*Intent class: (.*)', gt_parts[1].strip())
+                pred_match = re.match(r'.*Intent class: (.*)', pred_parts[1].strip())
                
-                gt_transcript, gt_intent_class = gt_match.groups()
-                pred_transcript, pred_intent_class = pred_match.groups()
-                gt_transcripts.append(gt_transcript)
-                gt_intents.append(gt_intent_class)
-                pred_transcripts.append(pred_transcript)
-                pred_intents.append(pred_intent_class)
+                gt_intent_class = gt_match.groups()
+                pred_intent_class = pred_match.groups()
+                gt_intents.append(gt_intent_class[0])
+                pred_intents.append(pred_intent_class[0])
                 #debug prints
                 """
                 print("gt match: ", gt_match)
                 print("pred match: ", pred_match)
-                print("gt transcript: ", gt_transcript)
-                print("pred transcript: ", pred_transcript)
                 print("gt intent: ", gt_intent_class)
                 print("pred intent: ", pred_intent_class)
                 """
@@ -71,10 +67,9 @@ def parse_file(params, output_dir):
                 print("Invalid lines.")
     #check lists lenghts
     assert len(gt_keys) == len(pred_keys), "Error: The keys lists have different lengths!"
-    assert len(gt_transcripts) == len(pred_transcripts), "Error: The keys lists have different lengths!"
     assert len(pred_intents) == len(pred_intents), "Error: The keys lists have different lengths!"
-    
-    return gt_keys, gt_transcripts, gt_intents, pred_keys, pred_transcripts, pred_intents
+   
+    return gt_keys, gt_intents, pred_keys, pred_intents
 
 
 if __name__ == "__main__":
@@ -91,21 +86,9 @@ if __name__ == "__main__":
     normalizer = BasicTextNormalizer()
 
     # parse files
-    _, ground_truth_texts, ground_truth_intents, _, prediction_texts, prediction_intents= parse_file(params, args.output_dir)
+    _, ground_truth_intents, _, prediction_intents= parse_file(params, args.output_dir)
 
-    """
-    WER for ASR computations
-    """
-    # normalize
-    ground_truth_texts = [normalizer(text) for text in ground_truth_texts]
-    prediction_texts = [normalizer(text) for text in prediction_texts]
-    # load and compute word error rate
-    wer_metric = load("wer")
-    wer = wer_metric.compute(references=ground_truth_texts, predictions=prediction_texts)
-    wer = 100*wer
-    # get WER percentage
-    print("Computed WER for this prediction experiment:", wer)
-
+    
     """
     Accuracy for Intent Classification computation
     """
@@ -124,8 +107,6 @@ if __name__ == "__main__":
     output_file = params.evaluate.evaluate_log
     output_file_path = os.path.join(args.output_dir, params.decode.ckpt_path, output_file)
     with open(output_file_path, "w") as file:
-        wer_line = "WER: "+ str(wer) + "\n"
         ic_line = "Intent Classification Accuracy: " + str(intent_accuracy) + "\n"
-        file.write(wer_line)
         file.write(ic_line)
         
