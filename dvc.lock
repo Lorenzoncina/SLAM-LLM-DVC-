@@ -32,7 +32,7 @@ stages:
       /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_fr-FR_train_asr_ic_sf.jsonl
       /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_fr-FR_dev_asr_ic_sf.jsonl
       0.0001 vicuna-7b-v1.5 4096 wavlm 5 1024 linear 3 1000 100000 2 2 
-      /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250320
+      /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250321
     deps:
     - path: SLAM-LLM/examples/asr_librispeech/scripts/finetune.sh
       hash: md5
@@ -46,6 +46,10 @@ stages:
     params:
       params.yaml:
         train:
+          prompt: 'First, transcribe the speech into text; Then predict the user intent;
+            Finally annotate the utterance. This is an example: Transcript: allumez
+            les lumières dans la cuisine. Intent class: iot. Annotated utterance:
+            allumez les lumières dans la [place_name : cuisine] '
           experiment_date: '20240320'
           speech_encoder_path: /stek/lconcina/SLAM-LLM-DVC-/models/WavLM-Large.pt
           llm_path: /stek/lconcina/SLAM-LLM-DVC-/models/vicuna-7b-v1.5
@@ -54,7 +58,7 @@ stages:
           val_data_path: 
             /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_fr-FR_dev_asr_ic_sf.jsonl
           output_dir: 
-            /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250320
+            /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250321
           learn_rate: 0.0001
           llm_name: vicuna-7b-v1.5
           llm_dim: 4096
@@ -69,15 +73,15 @@ stages:
           val_batch_size: 2
     outs:
     - path: 
-        train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250320
+        train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250321
       hash: md5
-      md5: 4ba53e05067f5baa96694d10e064abc2.dir
-      size: 1283961749
+      md5: 68584deffa815b42f2649727ac1ad3bf.dir
+      size: 1283962274
       nfiles: 22
   decode:
     cmd: bash SLAM-LLM/examples/asr_librispeech/scripts/decode.sh /stek/lconcina/SLAM-LLM-DVC-/models/WavLM-Large.pt
       /stek/lconcina/SLAM-LLM-DVC-/models/vicuna-7b-v1.5 
-      /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250320
+      /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250321
       speech_massive_fr-FR_test_asr_ic_sf /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data
       vicuna-7b-v1.5 4096 wavlm 1024 linear 3 2 asr_epoch_3_step_5486/
     deps:
@@ -86,10 +90,10 @@ stages:
       md5: df2ed4e316b8c7ece8ef30d0627814b2
       size: 2579
     - path: 
-        train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250320
+        train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250321
       hash: md5
-      md5: 148b3a7d86cd373ae3b7220cb9dfa904.dir
-      size: 1284953771
+      md5: 42a477ad3903e73d1aeb353ca6c958ad.dir
+      size: 1284958387
       nfiles: 29
     params:
       params.yaml:
@@ -101,6 +105,10 @@ stages:
           val_batch_size: 2
           ckpt_path: asr_epoch_3_step_5486/
         train:
+          prompt: 'First, transcribe the speech into text; Then predict the user intent;
+            Finally annotate the utterance. This is an example: Transcript: allumez
+            les lumières dans la cuisine. Intent class: iot. Annotated utterance:
+            allumez les lumières dans la [place_name : cuisine] '
           experiment_date: '20240320'
           speech_encoder_path: /stek/lconcina/SLAM-LLM-DVC-/models/WavLM-Large.pt
           llm_path: /stek/lconcina/SLAM-LLM-DVC-/models/vicuna-7b-v1.5
@@ -109,7 +117,7 @@ stages:
           val_data_path: 
             /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_fr-FR_dev_asr_ic_sf.jsonl
           output_dir: 
-            /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250320
+            /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250321
           learn_rate: 0.0001
           llm_name: vicuna-7b-v1.5
           llm_dim: 4096
@@ -124,7 +132,7 @@ stages:
           val_batch_size: 2
   evaluate:
     cmd: python src/utils/evaluate_exp.py --config params.yaml --output_dir 
-      /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250320
+      /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250321
     params:
       params.yaml:
         evaluate:

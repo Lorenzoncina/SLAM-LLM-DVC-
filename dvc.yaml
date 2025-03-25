@@ -16,13 +16,13 @@ stages:
     params:
     - train
     outs:
-    - /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250320
+    - /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250321
     #- /stek/lconcina/SLAM-LLM-DVC-/train_output/${train.llm_name}-speechMassive-${train.encoder_projector}-steplrwarmupkeep${train.learn_rate}-${train.encoder_name}-${train.experiment_date}
   decode:
     cmd: bash SLAM-LLM/examples/asr_librispeech/scripts/decode.sh ${decode.speech_encoder_path} ${decode.llm_path} ${train.output_dir} ${decode.split} ${decode.test_data_path} ${train.llm_name} ${train.llm_dim} ${train.encoder_name} ${train.encoder_dim} ${train.encoder_projector} ${train.num_epochs} ${decode.val_batch_size} ${decode.ckpt_path}
     deps:
     - SLAM-LLM/examples/asr_librispeech/scripts/decode.sh 
-    - /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250320
+    - /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250321
     params:
     - decode
     - train
