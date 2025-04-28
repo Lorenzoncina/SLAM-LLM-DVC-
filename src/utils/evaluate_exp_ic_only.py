@@ -96,7 +96,16 @@ if __name__ == "__main__":
     ground_truth_intents = [normalizer(text) for text in ground_truth_intents]
     prediction_intents = [normalizer(text) for text in prediction_intents]
 
-    correct_intents = sum(1 for gt, pred in zip(ground_truth_intents, prediction_intents) if gt == pred)
+    #correct_intents = sum(1 for gt, pred in zip(ground_truth_intents, prediction_intents) if gt == pred)
+    correct_intents = 0
+
+    for gt, pred in zip(ground_truth_intents, prediction_intents):
+        if gt == pred:
+            correct_intents += 1
+            #print(f"Correct prediction: ground truth = {gt}, prediction = {pred}")
+        #else:
+        #    print(f"Mismatch: ground truth = {gt}, prediction = {pred}")
+
     intent_accuracy = 100 * (correct_intents / len(ground_truth_intents))
     print("Computed Intent Classification Accuracy:", intent_accuracy)
 

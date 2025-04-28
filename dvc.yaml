@@ -1,34 +1,34 @@
 stages:
-  data_prep:
-    cmd:  python src/utils/prepare_slamllm_data.py --config params.yaml
-    deps:
-    - src/utils/prepare_slamllm_data.py
-    - data/speech_massive_data/hf_parquet_data
-    params:
-    - prepare
-    outs:
-    - data/speech_massive_data/slamllm_json_data
+  #data_prep:
+  #  cmd:  python src/utils/prepare_slamllm_data.py --config params.yaml
+  #  deps:
+  #  - src/utils/prepare_slamllm_data.py
+  #  - data/speech_massive_data/hf_parquet_data
+  #  params:
+  #  - prepare
+  #  outs:
+  #  - data/speech_massive_data/slamllm_json_data_not_tracked
   finetune:
     cmd: bash SLAM-LLM/examples/asr_librispeech/scripts/finetune.sh ${train.speech_encoder_path} ${train.llm_path} ${train.train_data_path} ${train.val_data_path} ${train.learn_rate} ${train.llm_name} ${train.llm_dim} ${train.encoder_name} ${train.encoder_projector_ds_rate} ${train.encoder_dim} ${train.encoder_projector} ${train.num_epochs} ${train.warmup_steps} ${train.total_steps} ${train.batch_size_training} ${train.val_batch_size} ${train.output_dir}
     deps:
     - SLAM-LLM/examples/asr_librispeech/scripts/finetune.sh
-    - data/speech_massive_data/slamllm_json_data
+    - data/mlc-slm-data/subset_test
     params:
     - train
     outs:
-    - /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250325-exp-1.5
+    - /stek/lconcina/SLAM-LLM-DVC-/train_output/train_output/eurollm-9b-lora-mlc-slm-challenge-data-full-data-linear-steplrwarmupkeep1e-4-whisper-20250423-exp-2.2
     #- /stek/lconcina/SLAM-LLM-DVC-/train_output/${train.llm_name}-speechMassive-${train.encoder_projector}-steplrwarmupkeep${train.learn_rate}-${train.encoder_name}-${train.experiment_date}
   decode:
     cmd: bash SLAM-LLM/examples/asr_librispeech/scripts/decode.sh ${decode.speech_encoder_path} ${decode.llm_path} ${train.output_dir} ${decode.split} ${decode.test_data_path} ${train.llm_name} ${train.llm_dim} ${train.encoder_name} ${train.encoder_dim} ${train.encoder_projector} ${train.num_epochs} ${decode.val_batch_size} ${decode.ckpt_path}
     deps:
     - SLAM-LLM/examples/asr_librispeech/scripts/decode.sh 
-    - /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250321
+    - /stek/lconcina/SLAM-LLM-DVC-/train_output/eurollm-1-7b-lora-mlc-slm-challenge-data-full-data-linear-steplrwarmupkeep1e-4-whisper-20250416-exp-2.1
     params:
     - decode
     - train
     #outs:
   evaluate:
-    cmd:  python src/utils/evaluate_exp.py --config params.yaml --output_dir ${train.output_dir}
+    cmd:  python src/utils/evaluate_wer.py --config params.yaml --output_dir ${train.output_dir}
     params:
     - evaluate
     #outs:

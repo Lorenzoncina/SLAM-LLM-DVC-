@@ -3,43 +3,48 @@
 
 prepare:
   base_dir: /stek/corpora/Speech-MASSIVE/
-  json_slam_files: data/speech_massive_data/slamllm_json_data
-  lang: fr-FR
-  train_split: train #or train-115
-  task: ic #specify here for which task the pipeline is finetuned. asr, ic: intent classification, sf: slot filling (asr_ic_sf)
+  json_slam_files: data/speech_massive_data/slamllm_json_data_not_tracked/
+  lang: 
+    #- fr-FR
+    #- de-DE
+    #- pt-PT
+    - pl-PL
+  train_split: train-115 #or train-115
+  task: asr_ic_  #specify here for which task the pipeline is finetuned. asr, ic: intent classification, sf: slot filling (asr_ic_sf)
+  
 
 train:
   #Placeholder for the prompt. Manually copy this one into conf/prompt.yaml
-  prompt: "Predict the user intent. This is an example: Intent class: iot."
-  experiment_date: "20240325"
-  speech_encoder_path: /stek/lconcina/SLAM-LLM-DVC-/models/WavLM-Large.pt
-  llm_path: /stek/lconcina/SLAM-LLM-DVC-/models/vicuna-7b-v1.5
-  train_data_path: /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_fr-FR_train_ic.jsonl
-  val_data_path: /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_fr-FR_dev_ic.jsonl
+  prompt: "Transcribe speech to text."
+  experiment_date: "20240424"
+  speech_encoder_path: large-v3-turbo
+  llm_path: /stek/lconcina/SLAM-LLM-DVC-/models/EuroLLM-9B
+  train_data_path: /stek/lconcina/SLAM-LLM-DVC-/data/mlc-slm-data/subset_test/train.jsonl
+  val_data_path: /stek/lconcina/SLAM-LLM-DVC-/data/mlc-slm-data/subset_test/dev.jsonl
   #manually define the output folder with this format output_dir: /stek/lconcina/SLAM-LLM-DVC-/train_output/${train.llm_name}-speechMassive-${train.encoder_projector}-steplrwarmupkeep${train.learn_rate}-${train.encoder_name}-${train.experiment_date}-exp-ID
-  output_dir:  /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250325-exp-1.5
+  output_dir: /stek/lconcina/SLAM-LLM-DVC-/train_output/eurollm-9b-lora-mlc-slm-challenge-data-full-data-linear-steplrwarmupkeep1e-4-whisper-20250423-exp-2.2
   learn_rate: 1e-4
-  llm_name: vicuna-7b-v1.5
+  llm_name: EuroLLM-9B
   llm_dim: 4096
-  encoder_name: wavlm
+  encoder_name: whisper
   encoder_projector_ds_rate: 5
-  encoder_dim: 1024
+  encoder_dim: 1280
   encoder_projector: linear
-  num_epochs: 6
+  num_epochs: 5
   warmup_steps: 1000
-  total_steps: 100000
+  total_steps: 1000000
   batch_size_training: 2
   val_batch_size: 2
 
 decode:
-  speech_encoder_path: /stek/lconcina/SLAM-LLM-DVC-/models/WavLM-Large.pt
-  llm_path: /stek/lconcina/SLAM-LLM-DVC-/models/vicuna-7b-v1.5
-  split: speech_massive_fr-FR_test_ic
-  test_data_path: /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data
-  val_batch_size: 2
-  ckpt_path: asr_epoch_3_step_4486/ #indicate here which checkpoint must be decoded by the decode script. this will be the same evaluated at the next stage
+  speech_encoder_path: large-v3-turbo
+  llm_path: /stek/lconcina/SLAM-LLM-DVC-/models/eurollm-1.7b
+  split: mlc-slm-thai-dev
+  test_data_path: /stek/lconcina/SLAM-LLM-DVC-/data/mlc-slm-data/thai_data
+  val_batch_size: 8
+  ckpt_path: asr_epoch_2_step_198874 #indicate here which checkpoint must be decoded by the decode script. this will be the same evaluated at the next stage
 
 evaluate:
-  ground_truth_file: decode_speech_massive_fr-FR_test_ic_beam4_gt
-  prediction_file: decode_speech_massive_fr-FR_test_ic_beam4_pred
-  evaluate_log: evaluate.log
+  ground_truth_file: decode_mlc-slm-thai-dev_beam4_gt
+  prediction_file: decode_mlc-slm-thai-dev_beam4_pred
+  evaluate_log: evaluate-thlog
