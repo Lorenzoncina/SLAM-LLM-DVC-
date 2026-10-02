@@ -18,33 +18,33 @@ train:
   prompt: "Transcribe speech to text."
   experiment_date: "20240424"
   speech_encoder_path: large-v3-turbo
-  llm_path: /stek/lconcina/SLAM-LLM-DVC-/models/EuroLLM-9B
-  train_data_path: /stek/lconcina/SLAM-LLM-DVC-/data/mlc-slm-data/subset_test/train.jsonl
-  val_data_path: /stek/lconcina/SLAM-LLM-DVC-/data/mlc-slm-data/subset_test/dev.jsonl
+  llm_path: /stek/lconcina/SLAM-LLM-DVC-/models/eurollm-1.7b
+  train_data_path: /stek/lconcina/SLAM-LLM-DVC-/data/cv17_ukranian_data/cv_17_train.jsonl
+  val_data_path: /stek/lconcina/SLAM-LLM-DVC-/data/cv17_ukranian_data/cv_17_validation.jsonl
   #manually define the output folder with this format output_dir: /stek/lconcina/SLAM-LLM-DVC-/train_output/${train.llm_name}-speechMassive-${train.encoder_projector}-steplrwarmupkeep${train.learn_rate}-${train.encoder_name}-${train.experiment_date}-exp-ID
-  output_dir: /stek/lconcina/SLAM-LLM-DVC-/train_output/eurollm-9b-lora-mlc-slm-challenge-data-full-data-linear-steplrwarmupkeep1e-4-whisper-20250423-exp-2.2
+  output_dir: /stek/lconcina/SLAM-LLM-DVC-/train_output/SVR_experiments/replaykd_ablation/uk_500/
   learn_rate: 1e-4
-  llm_name: EuroLLM-9B
-  llm_dim: 4096
+  llm_name: eurollm-1.7b
+  llm_dim: 2048
   encoder_name: whisper
   encoder_projector_ds_rate: 5
   encoder_dim: 1280
   encoder_projector: linear
-  num_epochs: 3
+  num_epochs: 5
   warmup_steps: 1000
   total_steps: 1000000
-  batch_size_training: 4
-  val_batch_size: 4
+  batch_size_training: 2
+  val_batch_size: 2
 
 decode:
   speech_encoder_path: large-v3-turbo
   llm_path: /stek/lconcina/SLAM-LLM-DVC-/models/eurollm-1.7b
-  split: mlc-slm-thai-dev
-  test_data_path: /stek/lconcina/SLAM-LLM-DVC-/data/mlc-slm-data/thai_data
+  split:  fi_fi_test
+  test_data_path: /stek/lconcina/SLAM-LLM-DVC-/data/fleurs_europe_contaminated/single_langs/
   val_batch_size: 8
-  ckpt_path: asr_epoch_2_step_198874 #indicate here which checkpoint must be decoded by the decode script. this will be the same evaluated at the next stage
+  ckpt_path: asr_epoch_4_step_12568 #indicate here which checkpoint must be decoded by the decode script. this will be the same evaluated at the next stage
 
 evaluate:
-  ground_truth_file: decode_mlc-slm-thai-dev_beam4_gt
-  prediction_file: decode_mlc-slm-thai-dev_beam4_pred
+  ground_truth_file: decode_cv_17_test_beam4_gt
+  prediction_file: decode_cv_17_test_beam4_pred
   evaluate_log: evaluate-thlog

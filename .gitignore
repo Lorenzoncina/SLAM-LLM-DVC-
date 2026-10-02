@@ -12,3 +12,4 @@ models/
 # Ignore temporary training output
 train_output/
 
+__pycache__/

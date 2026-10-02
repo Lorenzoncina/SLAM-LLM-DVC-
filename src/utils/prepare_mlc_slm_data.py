@@ -11,13 +11,13 @@ from pathlib import Path
 import argparse
 
 #specify here the base file path to audio data (change for train and dev)
-base_path = Path("/stek/corpora/mlc-slm-data/train_data/")
+base_path = Path("/")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process JSON files and generate JSONL outputs.")
-    parser.add_argument("--input_file", type=str, default="/stek/corpora/mlc-slm-data/train_data_italian/raw_data.list", help="Path to input jsonl file")
-    parser.add_argument("--output_file", type=str, default="/stek/lconcina/SLAM-LLM-DVC-/data/mlc-slm-data/italian_data/mlc-slm-italian-train.jsonl", help="Path to output json file")
+    parser.add_argument("--input_file", type=str, default="/stek/corpora/mlc-slm-data/evaluation_data/raw_data.list", help="Path to input jsonl file")
+    parser.add_argument("--output_file", type=str, default="/stek/lconcina/SLAM-LLM-DVC-/data/mlc-slm-data/full_dataset/mlc-slm-eval.jsonl", help="Path to output json file")
     args = parser.parse_args()
     input_file = args.input_file
     output_file = args.output_file
@@ -28,5 +28,6 @@ if __name__ == "__main__":
             relative_source = Path(data["source"])
             # Replace only the 'train_data' prefix with the desired absolute path
             new_source = base_path / Path(*relative_source.parts[1:])
+            #new_source =  Path(*relative_source.parts[1:])
             data["source"] = str(new_source)
             outfile.write(json.dumps(data, ensure_ascii=False) + "\n")

@@ -16,7 +16,8 @@ stages:
       params.yaml:
         prepare:
           base_dir: /stek/corpora/Speech-MASSIVE/
-          json_slam_files: data/speech_massive_data/slamllm_json_data_not_tracked/
+          json_slam_files: 
+            data/speech_massive_data/slamllm_json_data_not_tracked/
           lang:
           - pl-PL
           train_split: train-115
@@ -28,88 +29,86 @@ stages:
       size: 1066905
       nfiles: 3
   finetune:
-    cmd: bash SLAM-LLM/examples/asr_librispeech/scripts/finetune.sh /stek/lconcina/SLAM-LLM-DVC-/models/WavLM-Large.pt
-      /stek/lconcina/SLAM-LLM-DVC-/models/vicuna-7b-v1.5 
-      /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_frFR_deDE_train_ic.jsonl
-      /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_frFR_deDE_test_ic.jsonl
-      0.0001 vicuna-7b-v1.5 4096 wavlm 5 1024 linear 5 1000 100000 2 2 
-      /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250328-exp-1.7
+    cmd: bash SLAM-LLM/examples/asr_librispeech/scripts/finetune.sh 
+      large-v3-turbo /stek/lconcina/SLAM-LLM-DVC-/models/eurollm-1.7b 
+      /stek/lconcina/SLAM-LLM-DVC-/data/cv17_ukranian_data/cv_17_train.jsonl 
+      /stek/lconcina/SLAM-LLM-DVC-/data/cv17_ukranian_data/cv_17_validation.jsonl
+      0.0001 eurollm-1.7b 2048 whisper 5 1280 linear-svr 5 1000 1000000 2 2 
+      /stek/lconcina/SLAM-LLM-DVC-/train_output/SVR_experiments/synthetic_data/ukranian/500_samples/uk_exp_5_synth/uk-svr-stage2
     deps:
     - path: SLAM-LLM/examples/asr_librispeech/scripts/finetune.sh
       hash: md5
-      md5: 1b8433ef100ebe53400090929d879ee2
-      size: 3128
-    - path: data/speech_massive_data/slamllm_json_data
+      md5: 44919b62a94db46d58291dd39bfbc70c
+      size: 3883
+    - path: data/cv17_fl_europe
       hash: md5
-      md5: 3e2579587e80b3a1a4c1b37048eacf94.dir
-      size: 5149044
-      nfiles: 3
+      md5: f11911b403efb0652370bb3ed4e68151.dir
+      size: 384583271
+      nfiles: 6
     params:
       params.yaml:
         train:
-          prompt: 'Predict the user intent. This is an example: Intent class: iot.'
-          experiment_date: '20240328'
-          speech_encoder_path: /stek/lconcina/SLAM-LLM-DVC-/models/WavLM-Large.pt
-          llm_path: /stek/lconcina/SLAM-LLM-DVC-/models/vicuna-7b-v1.5
+          prompt: Transcribe speech to text.
+          experiment_date: '20240424'
+          speech_encoder_path: large-v3-turbo
+          llm_path: /stek/lconcina/SLAM-LLM-DVC-/models/eurollm-1.7b
           train_data_path: 
-            /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_frFR_deDE_train_ic.jsonl
+            /stek/lconcina/SLAM-LLM-DVC-/data/cv17_ukranian_data/cv_17_train.jsonl
           val_data_path: 
-            /stek/lconcina/SLAM-LLM-DVC-/data/speech_massive_data/slamllm_json_data/speech_massive_frFR_deDE_test_ic.jsonl
+            /stek/lconcina/SLAM-LLM-DVC-/data/cv17_ukranian_data/cv_17_validation.jsonl
           output_dir: 
-            /stek/lconcina/SLAM-LLM-DVC-/train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250328-exp-1.7
+            /stek/lconcina/SLAM-LLM-DVC-/train_output/SVR_experiments/synthetic_data/ukranian/500_samples/uk_exp_5_synth/uk-svr-stage2
           learn_rate: 0.0001
-          llm_name: vicuna-7b-v1.5
-          llm_dim: 4096
-          encoder_name: wavlm
+          llm_name: eurollm-1.7b
+          llm_dim: 2048
+          encoder_name: whisper
           encoder_projector_ds_rate: 5
-          encoder_dim: 1024
-          encoder_projector: linear
+          encoder_dim: 1280
+          encoder_projector: linear-svr
           num_epochs: 5
           warmup_steps: 1000
-          total_steps: 100000
+          total_steps: 1000000
           batch_size_training: 2
           val_batch_size: 2
     outs:
     - path: 
-        train_output/vicuna-7b-v1.5-speechMassive-linear-steplrwarmupkeep1e-4-wavlm-20250328-exp-1.7
+        train_output/SVR_experiments/synthetic_data/ukranian/500_samples/uk_exp_5_synth/uk-svr-stage2
       hash: md5
-      md5: cde870c2836d58592cb36ab7398939d8.dir
-      size: 1812657393
-      nfiles: 29
+      md5: be97590d0c809377dd2736d05e5da22f.dir
+      size: 22244948
+      nfiles: 9
   decode:
-    cmd: bash SLAM-LLM/examples/asr_librispeech/scripts/decode.sh large-v3-turbo /stek/lconcina/SLAM-LLM-DVC-/models/eurollm-1.7b
-      /stek/lconcina/SLAM-LLM-DVC-/train_output/eurollm-1-7b-mlc-slm-challenge-data-full-data-linear-steplrwarmupkeep1e-4-whisper-20250413-exp-2.0
-      mlc-slm-thai-dev /stek/lconcina/SLAM-LLM-DVC-/data/mlc-slm-data/thai_data eurollm-1.7b
-      2048 whisper 1280 linear 5 8 asr_epoch_2_step_198874
+    cmd: bash SLAM-LLM/examples/asr_librispeech/scripts/decode.sh large-v3-turbo
+      /stek/lconcina/SLAM-LLM-DVC-/models/eurollm-1.7b 
+      /stek/lconcina/SLAM-LLM-DVC-/train_output/SVR_experiments/replaykd_ablation/uk_500/
+      cv_17_test /stek/lconcina/SLAM-LLM-DVC-/data/cv17_ukranian_data 
+      eurollm-1.7b 2048 whisper 1280 linear 5 8 asr_epoch_4_step_12568
     deps:
     - path: SLAM-LLM/examples/asr_librispeech/scripts/decode.sh
       hash: md5
-      md5: bb99080be09e7436a32b38b2568a7adf
-      size: 2659
-    - path: 
-        train_output/eurollm-1-7b-lora-mlc-slm-challenge-data-full-data-linear-steplrwarmupkeep1e-4-whisper-20250416-exp-2.1
-      hash: md5
-      md5: 6a7e4de112db2035c9d5c872d365b47f.dir
-      size: 304185566
-      nfiles: 43
+      md5: d6e5e1b898df8be34eeed531f79f0074
+      size: 2811
     params:
       params.yaml:
         decode:
           speech_encoder_path: large-v3-turbo
           llm_path: /stek/lconcina/SLAM-LLM-DVC-/models/eurollm-1.7b
-          split: mlc-slm-thai-dev
-          test_data_path: /stek/lconcina/SLAM-LLM-DVC-/data/mlc-slm-data/thai_data
+          split: fi_fi_test
+          test_data_path: 
+            /stek/lconcina/SLAM-LLM-DVC-/data/fleurs_europe_contaminated/single_langs/
           val_batch_size: 8
-          ckpt_path: asr_epoch_2_step_198874
+          ckpt_path: asr_epoch_4_step_12568
         train:
           prompt: Transcribe speech to text.
-          experiment_date: '20240423'
+          experiment_date: '20240424'
           speech_encoder_path: large-v3-turbo
           llm_path: /stek/lconcina/SLAM-LLM-DVC-/models/eurollm-1.7b
-          train_data_path: /stek/lconcina/SLAM-LLM-DVC-/data/mlc-slm-data/full_dataset/mlc-slm-train.jsonl
-          val_data_path: /stek/lconcina/SLAM-LLM-DVC-/data/mlc-slm-data/full_dataset/mlc-slm-dev.jsonl
+          train_data_path: 
+            /stek/lconcina/SLAM-LLM-DVC-/data/cv17_ukranian_data/cv_17_train.jsonl
+          val_data_path: 
+            /stek/lconcina/SLAM-LLM-DVC-/data/cv17_ukranian_data/cv_17_validation.jsonl
           output_dir: 
-            /stek/lconcina/SLAM-LLM-DVC-/train_output/eurollm-1-7b-mlc-slm-challenge-data-full-data-linear-steplrwarmupkeep1e-4-whisper-20250413-exp-2.0
+            /stek/lconcina/SLAM-LLM-DVC-/train_output/SVR_experiments/replaykd_ablation/uk_500/
           learn_rate: 0.0001
           llm_name: eurollm-1.7b
           llm_dim: 2048
@@ -120,14 +119,14 @@ stages:
           num_epochs: 5
           warmup_steps: 1000
           total_steps: 1000000
-          batch_size_training: 4
+          batch_size_training: 2
           val_batch_size: 2
   evaluate:
     cmd: python src/utils/evaluate_wer.py --config params.yaml --output_dir 
-      /stek/lconcina/SLAM-LLM-DVC-/train_output/eurollm-1-7b-mlc-slm-challenge-data-full-data-linear-steplrwarmupkeep1e-4-whisper-20250413-exp-2.0
+      /stek/lconcina/SLAM-LLM-DVC-/train_output/SVR_experiments/replaykd_ablation/uk_500/
     params:
       params.yaml:
         evaluate:
-          ground_truth_file: decode_mlc-slm-thai-dev_beam4_gt
-          prediction_file: decode_mlc-slm-thai-dev_beam4_pred
+          ground_truth_file: decode_cv_17_test_beam4_gt
+          prediction_file: decode_cv_17_test_beam4_pred
           evaluate_log: evaluate-thlog

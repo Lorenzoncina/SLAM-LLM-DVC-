@@ -13,6 +13,6 @@ def filter_jsonl_by_keyword(input_path, output_path, keyword="Russian"):
                     print(f"Skipping invalid JSON line: {line.strip()}")
 
 # Example usage
-input_file = '/stek/lconcina/SLAM-LLM-DVC-/data/mlc-slm-data/full_dataset/mlc-slm-dev.jsonl'
-output_file = '/stek/lconcina/SLAM-LLM-DVC-/data/mlc-slm-data/russian_data/mlc-slm-russian-dev.jsonl'
+input_file = '/stek/lconcina/SLAM-LLM-DVC-/data/mlc-slm-data/full_dataset/mlc-slm-train.jsonl'
+output_file = '/stek/lconcina/SLAM-LLM-DVC-/data/mlc-slm-data/russian_data/mlc-slm-russian-train.jsonl'
 filter_jsonl_by_keyword(input_file, output_file)

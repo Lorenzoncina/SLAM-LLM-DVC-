@@ -3,10 +3,10 @@ from huggingface_hub import snapshot_download
 import os
 
 # Set your local folder path
-local_dir = "/stek/lconcina/SLAM-LLM-DVC-/models/EuroLLM-9B"
+local_dir = "/stek/lconcina/SLAM-LLM-DVC-/models/EuroLLM-1.7B-Instruct"
 
 # Download the entire model snapshot (including config, tokenizer, weights, etc.)
-model_path = snapshot_download(repo_id="utter-project/EuroLLM-9B", local_dir=local_dir, local_dir_use_symlinks=False)
+model_path = snapshot_download(repo_id="utter-project/EuroLLM-1.7B-Instruct", local_dir=local_dir, local_dir_use_symlinks=False)
 
 print(f"Model downloaded to: {model_path}")
 
